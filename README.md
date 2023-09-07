@@ -1,1 +1,3 @@
-# youtube-assistant
+# YouTube Assistant
+
+Ask questions about any YouTube video.
