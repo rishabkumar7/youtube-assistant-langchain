@@ -9,21 +9,21 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-embeddings = OpenAIEmbeddings()
 
 
-def create_db_from_youtube_video_url(video_url: str) -> FAISS:
+def create_db_from_youtube_video_url(video_url: str,openai_api_key) -> FAISS:
     loader = YoutubeLoader.from_youtube_url(video_url)
     transcript = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     docs = text_splitter.split_documents(transcript)
 
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     db = FAISS.from_documents(docs, embeddings)
     return db
 
 
-def get_response_from_query(db, query, k=4):
+def get_response_from_query(db, query, openai_api_key, k=4):
     """
     text-davinci-003 can handle up to 4097 tokens. Setting the chunksize to 1000 and k to 4 maximizes
     the number of tokens to analyze.
@@ -32,7 +32,7 @@ def get_response_from_query(db, query, k=4):
     docs = db.similarity_search(query, k=k)
     docs_page_content = " ".join([d.page_content for d in docs])
 
-    llm = OpenAI(model_name="text-davinci-003")
+    llm = OpenAI(model_name="text-davinci-003",openai_api_key=openai_api_key)
 
     prompt = PromptTemplate(
         input_variables=["question", "docs"],

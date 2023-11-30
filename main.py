@@ -8,7 +8,7 @@ with st.sidebar:
     with st.form(key='my_form'):
         youtube_url = st.sidebar.text_area(
             label="What is the YouTube video URL?",
-            max_chars=50
+            max_chars=150
             )
         query = st.sidebar.text_area(
             label="Ask me about the video?",
@@ -18,7 +18,7 @@ with st.sidebar:
         openai_api_key = st.sidebar.text_input(
             label="OpenAI API Key",
             key="langchain_search_api_key_openai",
-            max_chars=50,
+            max_chars=150,
             type="password"
             )
         "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
@@ -30,7 +30,7 @@ if query and youtube_url:
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
     else:
-        db = lch.create_db_from_youtube_video_url(youtube_url)
-        response, docs = lch.get_response_from_query(db, query)
+        db = lch.create_db_from_youtube_video_url(youtube_url,openai_api_key)
+        response, docs = lch.get_response_from_query(db, query,openai_api_key)
         st.subheader("Answer:")
         st.text(textwrap.fill(response, width=85))
